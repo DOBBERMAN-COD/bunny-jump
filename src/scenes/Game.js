@@ -11,5 +11,6 @@ export default class Game extends Phaser.Scene {
 
   create() {
     // called once all the assets for the Scene have been loaded.Only assets that have been loaded can be used in create()
+    this.add.image(240, 320, "background");
   }
 }
