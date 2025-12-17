@@ -6,6 +6,7 @@ export default class Game extends Phaser.Scene {
   }
   preload() {
     // called to allow us to specify images,audio or other assets to laod before starting the Scene
+    this.load.image("background", "assets/bg_layer1.png");
   }
 
   create() {
