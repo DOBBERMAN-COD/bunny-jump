@@ -11,6 +11,9 @@ export default class Game extends Phaser.Scene {
 
     //load the platform image
     this.load.image("platform", "assets/ground_grass_broken.png");
+
+    //load the bunny image
+    this.load.image("bunny-stand", "assets/bunny1_stand.png");
   }
 
   create() {
@@ -37,5 +40,8 @@ export default class Game extends Phaser.Scene {
       const body = platform.body;
       body.updateFromGameObject(); // this will refresh tehe physics body based on any changes we made to the GameObject like position and scale
     }
+
+    //Create a bunny sprite
+    this.physics.add.sprite(240, 320, "bunny-stand").setScale(0.5);
   }
 }
