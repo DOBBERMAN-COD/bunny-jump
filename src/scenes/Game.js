@@ -56,6 +56,9 @@ export default class Game extends Phaser.Scene {
     this.player.body.checkCollision.up = false;
     this.player.body.checkCollision.left = false;
     this.player.body.checkCollision.right = false;
+
+    //Enabls us to follow the bunny
+    this.cameras.main.startFollow(this.player);
   }
 
   update() {
