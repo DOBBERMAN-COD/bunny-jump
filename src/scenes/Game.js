@@ -10,6 +10,9 @@ export default class Game extends Phaser.Scene {
   /** @type {Phaser.Physics.Arcade.StaticGroup} */
   platforms;
 
+  /**@type {Phaser.Types.Input.Keyboard.CursorKeys} */
+  cursors;
+
   preload() {
     // called to allow us to specify images,audio or other assets to laod before starting the Scene
 
@@ -20,6 +23,9 @@ export default class Game extends Phaser.Scene {
 
     //load the bunny image
     this.load.image("bunny-stand", "assets/bunny1_stand.png");
+
+    // enable to move right and left
+    this.cursor = this.input.keyboard.createCursorKeys();
   }
 
   create() {
