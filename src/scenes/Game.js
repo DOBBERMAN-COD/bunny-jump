@@ -25,7 +25,7 @@ export default class Game extends Phaser.Scene {
     this.load.image("bunny-stand", "assets/bunny1_stand.png");
 
     // enable to move right and left
-    this.cursor = this.input.keyboard.createCursorKeys();
+    this.cursors = this.input.keyboard.createCursorKeys();
   }
 
   create() {
@@ -71,13 +71,23 @@ export default class Game extends Phaser.Scene {
     this.cameras.main.startFollow(this.player);
   }
 
-  update() {
+  update(t, dt) {
     // find out from Arcade Physics if the player's physics is touching something below it
     const touchingDown = this.player.body.touching.down;
 
     if (touchingDown) {
       //this makes the bunny jump straight up
       this.player.setVelocityY(-300);
+    }
+
+    //left and right input logic
+    if (this.cursors.left.isDown && !touchingDown) {
+      this.player.setVelocityX(-200);
+    } else if (this.cursors.right.isDown && !touchingDown) {
+      this.player.setVelocityX(200);
+    } else {
+      //Stop the movement if not left or right
+      this.player.setVelocityX(0);
     }
 
     //the code below iterates over each platfrom in the this.platforms group.The action we are performing is to check if each
