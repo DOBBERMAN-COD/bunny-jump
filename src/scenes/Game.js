@@ -72,5 +72,21 @@ export default class Game extends Phaser.Scene {
       //this makes the bunny jump straight up
       this.player.setVelocityY(-300);
     }
+
+    //the code below iterates over each platfrom in the this.platforms group.The action we are performing is to check if each
+    // platform's y value is greater than or equal to the vertical distance that the camera has scrolled plus a fixed 700 pixels.
+    //If that is true we move the platfrom to some random amount between 50 and 100 pixels above where the top of the camera is.
+    //Then we refresh the platform's physics body to match changes made to the platform -namely the change in y.
+    this.platforms.children.iterate((child) => {
+      /** @type {Phaser.Physics.Arcade.Sprite} */
+      const platform = child;
+
+      const scrollY = this.cameras.main.scrollY;
+
+      if (platform.y >= scrollY + 700) {
+        platform.y = scrollY - Phaser.Math.Between(50, 100);
+        platform.body.updateFromGameObject();
+      }
+    });
   }
 }
