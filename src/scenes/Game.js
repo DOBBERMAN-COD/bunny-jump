@@ -25,7 +25,8 @@ export default class Game extends Phaser.Scene {
   create() {
     // called once all the assets for the Scene have been loaded.Only assets that have been loaded can be used in create()
 
-    this.add.image(240, 320, "background");
+    this.add.image(240, 320, "background").setScrollFactor(1, 0); //by setting the y scroll factor to 0 we can keep the background from scrolling up and down
+    // with the camera.
 
     // //add a platfrom image in the middle
     // this.physics.add.image(240, 320, "platform").setScale(0.5);
