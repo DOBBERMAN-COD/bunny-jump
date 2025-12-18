@@ -4,6 +4,12 @@ export default class Game extends Phaser.Scene {
   constructor() {
     super("game"); //unique key defined by a Scene
   }
+  /**@type {Phaser.Physics.Arcade.Sprite} */
+  player;
+
+  /** @type {Phaser.Physics.Arcade.StaticGroup} */
+  platforms;
+
   preload() {
     // called to allow us to specify images,audio or other assets to laod before starting the Scene
 
@@ -16,9 +22,6 @@ export default class Game extends Phaser.Scene {
     this.load.image("bunny-stand", "assets/bunny1_stand.png");
   }
 
-  /**@type {Phaser.Physics.Arcade.Sprite} */
-  player;
-
   create() {
     // called once all the assets for the Scene have been loaded.Only assets that have been loaded can be used in create()
 
@@ -28,7 +31,7 @@ export default class Game extends Phaser.Scene {
     // this.physics.add.image(240, 320, "platform").setScale(0.5);
 
     //create the group
-    const platforms = this.physics.add.staticGroup();
+    this.platforms = this.physics.add.staticGroup();
 
     //then create 5 platforms from the group
     for (let i = 0; i < 5; ++i) {
@@ -36,7 +39,7 @@ export default class Game extends Phaser.Scene {
       const y = 150 * i;
 
       /*@type {Phaser.Physics.arcade.Sprite} */
-      const platform = platforms.create(x, y, "platform");
+      const platform = this.platforms.create(x, y, "platform");
       platform.scale = 0.5;
 
       /**@type{Phaser.Physics.Arcade.StaticBody} */
@@ -50,7 +53,7 @@ export default class Game extends Phaser.Scene {
       .setScale(0.5);
 
     //adds collisions
-    this.physics.add.collider(platforms, this.player);
+    this.physics.add.collider(this.platforms, this.player);
 
     // Enables the bunny to jump through platforms,land on them and then jump again
     this.player.body.checkCollision.up = false;
