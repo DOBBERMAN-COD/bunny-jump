@@ -14,6 +14,9 @@ export default class Game extends Phaser.Scene {
   /**@type {Phaser.Types.Input.Keyboard.CursorKeys} */
   cursors;
 
+  /**@type {Phaser.Physics.Arcade.Group} */
+  carrots;
+
   preload() {
     // called to allow us to specify images,audio or other assets to laod before starting the Scene
 
@@ -78,8 +81,10 @@ export default class Game extends Phaser.Scene {
     this.cameras.main.setDeadzone(this.scale.width * 1.5);
 
     //create a carrot
-    const carrot = new Carrot(this, 240, 320, "carrot");
-    this.add.existing(carrot);
+    this.carrots = this.physics.add.group({
+      classType: Carrot,
+    });
+    this.carrots.get(240, 320, "carrot");
   }
 
   update(t, dt) {
