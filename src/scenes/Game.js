@@ -87,6 +87,14 @@ export default class Game extends Phaser.Scene {
     this.carrots.get(240, 320, "carrot");
 
     this.physics.add.collider(this.platforms, this.carrots);
+
+    this.physics.add.overlap(
+      this.player,
+      this.carrots,
+      this.handleCollectCarrot, //called an overlap
+      undefined,
+      this
+    );
   }
 
   update(t, dt) {
@@ -160,5 +168,17 @@ export default class Game extends Phaser.Scene {
     carrot.body.setSize(carrot.width, carrot.height);
 
     return carrot;
+  }
+
+  /**
+   * @param {Phaser.Physics.Arcade.Sprite} player
+   * @param {Carrot} carrot
+   */
+  handleCollectCarrot(player, carrot) {
+    // hide from display
+    this.carrots.killAndHide(carrot);
+
+    //Disable from physics world
+    this.physics.world.disableBody(carrot.body);
   }
 }
