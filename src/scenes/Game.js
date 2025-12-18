@@ -51,6 +51,11 @@ export default class Game extends Phaser.Scene {
 
     //adds collisions
     this.physics.add.collider(platforms, this.player);
+
+    // Enables the bunny to jump through platforms,land on them and then jump again
+    this.player.body.checkCollision.up = false;
+    this.player.body.checkCollision.left = false;
+    this.player.body.checkCollision.right = false;
   }
 
   update() {
@@ -59,7 +64,7 @@ export default class Game extends Phaser.Scene {
 
     if (touchingDown) {
       //this makes the bunny jump straight up
-      this.player.setVelocity(-300);
+      this.player.setVelocityY(-300);
     }
   }
 }
