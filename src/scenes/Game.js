@@ -16,6 +16,9 @@ export default class Game extends Phaser.Scene {
     this.load.image("bunny-stand", "assets/bunny1_stand.png");
   }
 
+  /**@type {Phaser.Physics.Arcade.Sprite} */
+  player;
+
   create() {
     // called once all the assets for the Scene have been loaded.Only assets that have been loaded can be used in create()
 
@@ -42,9 +45,13 @@ export default class Game extends Phaser.Scene {
     }
 
     //Create a bunny sprite
-    this.physics.add.sprite(240, 320, "bunny-stand").setScale(0.5);
+    this.player = this.physics.add
+      .sprite(240, 320, "bunny-stand")
+      .setScale(0.5);
 
     //adds collisions
-    this.physics.add.collider(platforms, player);
+    this.physics.add.collider(platforms, this.player);
   }
+
+  update() {}
 }
