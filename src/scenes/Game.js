@@ -1,4 +1,5 @@
 import Phaser from "../lib/phaser.js";
+import Carrot from "../game/Carrot.js";
 
 export default class Game extends Phaser.Scene {
   constructor() {
@@ -23,6 +24,9 @@ export default class Game extends Phaser.Scene {
 
     //load the bunny image
     this.load.image("bunny-stand", "assets/bunny1_stand.png");
+
+    //load the carrot image
+    this.load.image("carrot", "assets/carrot.png");
 
     // enable to move right and left
     this.cursors = this.input.keyboard.createCursorKeys();
@@ -72,6 +76,10 @@ export default class Game extends Phaser.Scene {
 
     //set the horizontal dead zone to 1.5x game width
     this.cameras.main.setDeadzone(this.scale.width * 1.5);
+
+    //create a carrot
+    const carrot = new Carrot(this, 240, 320, "carrot");
+    this.add.existing(carrot);
   }
 
   update(t, dt) {
