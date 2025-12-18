@@ -67,8 +67,11 @@ export default class Game extends Phaser.Scene {
     this.player.body.checkCollision.left = false;
     this.player.body.checkCollision.right = false;
 
-    //Enabls us to follow the bunny
+    //Enables us to follow the bunny
     this.cameras.main.startFollow(this.player);
+
+    //set the horizontal dead zone to 1.5x game width
+    this.cameras.main.setDeadzone(this.scale.width * 1.5);
   }
 
   update(t, dt) {
@@ -105,5 +108,21 @@ export default class Game extends Phaser.Scene {
         platform.body.updateFromGameObject();
       }
     });
+
+    this.horizontalWrap(this.player);
+  }
+
+  /**
+   * @param {Phaser.GameObjects.Sprite} sprite
+   */
+  horizontalWrap(sprite) {
+    const halfWidth = sprite.displayWidth * 0.5;
+    const gameWidth = this.scale.width;
+
+    if (sprite.x < -halfWidth) {
+      sprite.x = gameWidth + halfWidth;
+    } else if (sprite.x > gameWidth + halfWidth) {
+      sprite.x = -halfWidth;
+    }
   }
 }
