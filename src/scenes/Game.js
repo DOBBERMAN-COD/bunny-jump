@@ -35,7 +35,7 @@ export default class Game extends Phaser.Scene {
       const x = Phaser.Math.Between(80, 400);
       const y = 150 * i;
 
-      /*@type{Phaser.Physics.arcade.Sprite} */
+      /*@type {Phaser.Physics.arcade.Sprite} */
       const platform = platforms.create(x, y, "platform");
       platform.scale = 0.5;
 
@@ -53,5 +53,13 @@ export default class Game extends Phaser.Scene {
     this.physics.add.collider(platforms, this.player);
   }
 
-  update() {}
+  update() {
+    // find out from Arcade Physics if the player's physics is touching something below it
+    const touchingDown = this.player.body.touching.down;
+
+    if (touchingDown) {
+      //this makes the bunny jump straight up
+      this.player.setVelocity(-300);
+    }
+  }
 }
