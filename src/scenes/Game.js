@@ -42,6 +42,9 @@ export default class Game extends Phaser.Scene {
     //load the carrot image
     this.load.image("carrot", "assets/carrot.png");
 
+    //load the bunny jump image
+    this.load.image("bunny-jump", "assets/bunny1_jump.png");
+
     // enable to move right and left
     this.cursors = this.input.keyboard.createCursorKeys();
   }
@@ -122,6 +125,9 @@ export default class Game extends Phaser.Scene {
     if (touchingDown) {
       //this makes the bunny jump straight up
       this.player.setVelocityY(-300);
+
+      //Switch to jump texture
+      this.player.setTexture("bunny-jump");
     }
 
     //left and right input logic
