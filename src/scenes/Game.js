@@ -20,7 +20,10 @@ export default class Game extends Phaser.Scene {
   /** @type {Set<Phaser.GameObjects.Sprite} */
   activeCarrots = new Set();
 
-  carrotCollected = 0;
+  /**@type {Phaser.GameObjects.Text} */
+  carrotsCollectedText;
+
+  carrotsCollected = 0;
 
   preload() {
     // called to allow us to specify images,audio or other assets to laod before starting the Scene
@@ -103,7 +106,7 @@ export default class Game extends Phaser.Scene {
 
     //Displays the score
     const style = { color: "#000", fontSize: 24 };
-    this.add
+    this.carrotsCollectedText = this.add
       .text(240, 10, "Carrots:0", style)
       .setScrollFactor(0)
       .setOrigin(0.5, 0);
@@ -192,7 +195,7 @@ export default class Game extends Phaser.Scene {
 
     //Check if there's already a carrot near this position
     const existingCarrot = this.carrots.children.entries.find(
-      (carrot) => Math.abs(carrot.x - x) < 30 && Math.abs(carrot.y - y) < 30
+      (carrot) => Math.abs(carrot.x - x) < 50 && Math.abs(carrot.y - y) < 50
     );
 
     if (existingCarrot) {
@@ -272,6 +275,7 @@ export default class Game extends Phaser.Scene {
    * @param {Phaser.Physics.Arcade.Sprite} player
    * @param {Carrot} carrot
    */
+
   handleCollectCarrot(player, carrot) {
     //Remove from active set
     this.activeCarrots.delete(carrot);
@@ -284,6 +288,11 @@ export default class Game extends Phaser.Scene {
 
     //increment by 1
     this.carrotsCollected++;
+
+    // create new text value and set it
+    const value = `Carrots: ${this.carrotsCollected}`;
+    console.log(this.carrotsCollected);
+    this.carrotsCollectedText.text = value;
 
     //Destroy the carrot completely
     carrot.destroy();
