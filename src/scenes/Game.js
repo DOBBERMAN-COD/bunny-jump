@@ -17,6 +17,9 @@ export default class Game extends Phaser.Scene {
   /**@type {Phaser.Physics.Arcade.Group} */
   carrots;
 
+  /** @type {Set<Phaser.GameObjects.Sprite} */
+  activeCarrots = new Set();
+
   preload() {
     // called to allow us to specify images,audio or other assets to laod before starting the Scene
 
@@ -133,6 +136,22 @@ export default class Game extends Phaser.Scene {
         //Create a carrot above the platform being reused
         this.addCarrotAbove(platform);
       }
+
+      console.log("Active carrots", this.activeCarrots.size);
+    });
+
+    // Handle carrot recycling
+    this.carrots.children.iterate((child) => {
+      /** @type {Carrot} */
+      const carrot = child;
+
+      if (!carrot.active) return;
+
+      //check if carrot is below screen
+      if (carrot.y > this.cameras.main.scrollY + this.scale.height + 100) {
+        //Recycle the carrot
+        this.recycleCarrot(carrot);
+      }
     });
 
     this.horizontalWrap(this.player);
@@ -152,29 +171,92 @@ export default class Game extends Phaser.Scene {
     }
   }
 
-  /**
-   * @param {Phaser.GameObjects.Sprite} sprite
-   */
+  maxCarrots = 10;
 
   addCarrotAbove(sprite) {
+    if (this.activeCarrots.size >= this.maxCarrots) {
+      return null;
+    }
+
     const y = sprite.y - sprite.displayHeight;
+    const x = sprite.x - Phaser.Math.Between(-30, 30); //Add some horizontal variation
+
+    //Check if there's already a carrot near this position
+    const existingCarrot = this.carrots.children.entries.find(
+      (carrot) => Math.abs(carrot.x - x) < 30 && Math.abs(carrot.y - y) < 30
+    );
+
+    if (existingCarrot) {
+      return existingCarrot; // Return existing carrot instead of creating a new one
+    }
 
     /**@type {Phaser.Physics.Arcade.Sprite} */
     const carrot = this.carrots.get(sprite.x, y, "carrot");
 
-    //set active and visible
-    carrot.setActive(true);
-    carrot.setVisible(true);
+    if (carrot) {
+      //set active and visible
+      carrot.setActive(true);
+      carrot.setVisible(true);
+      carrot.setPosition(x, y);
+      carrot.body.enable = true;
+      carrot.body.reset(x, y);
+      carrot.body.setSize(carrot.width, carrot.height);
 
-    this.add.existing(carrot);
-
-    //Update the physics body size
-    carrot.body.setSize(carrot.width, carrot.height);
-
-    //make sure body is enabled in the physics world
-    this.physics.world.enable(carrot);
+      //add to active set
+      this.activeCarrots.add(carrot);
+    }
 
     return carrot;
+  }
+
+  //recycle carrot method
+  recycleCarrot(carrot) {
+    //Remove from active set
+    this.activeCarrots.delete(carrot);
+
+    if (this.activeCarrots.size >= this.maxCarrots) {
+      return;
+    }
+
+    let newPositionFound = false;
+    let attempts = 0;
+    const maxAttempts = 5; // Prevent Infinite Loop
+    let x, y;
+
+    while (!newPositionFound && attempts < maxAttempts) {
+      const platform =
+        this.platforms.children.entries[
+          Phaser.Math.Between(0, this.platforms.children.entries.length - 1)
+        ];
+
+      // reset carrot position above a random platform
+      x = platform.x + Phaser.Math.Between(-30, 30);
+      y = platform.y - platform.displayHeight;
+
+      //Check if there's already a carrot near this position
+      const existingCarrot = this.carrots.children.entries.find(
+        (c) => c.active && Math.abs(c.x - x) < 30 && Math.abs(c.y - y) < 30
+      );
+
+      if (!existingCarrot) {
+        newPositionFound = true;
+        carrot.setPosition(x, y);
+        carrot.body.enable = true;
+        carrot.body.reset(x, y);
+        carrot.setActive(true);
+        carrot.setVisible(true);
+
+        // Add back to active set
+        this.activeCarrots.add(carrot);
+      }
+      attempts++;
+    }
+
+    // if no suitable position found after max attempts just disale the carrot
+    if (!newPositionFound) {
+      this.carrots.killAndHide(carrot);
+      this.physics.world.disableBody(carrot.body);
+    }
   }
 
   /**
@@ -182,10 +264,16 @@ export default class Game extends Phaser.Scene {
    * @param {Carrot} carrot
    */
   handleCollectCarrot(player, carrot) {
+    //Remove from active set
+    this.activeCarrots.delete(carrot);
+
     // hide from display
     this.carrots.killAndHide(carrot);
 
     //Disable from physics world
     this.physics.world.disableBody(carrot.body);
+
+    //Destroy the carrot completely
+    carrot.destroy();
   }
 }
