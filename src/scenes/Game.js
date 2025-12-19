@@ -167,6 +167,11 @@ export default class Game extends Phaser.Scene {
     });
 
     this.horizontalWrap(this.player);
+
+    const bottomPlatform = this.findBottomMostPlatform();
+    if (this.player.y > bottomPlatform.y + 200) {
+      console.log("game over💥💥💥");
+    }
   }
 
   /**
@@ -296,5 +301,21 @@ export default class Game extends Phaser.Scene {
 
     //Destroy the carrot completely
     carrot.destroy();
+  }
+
+  findBottomMostPlatform() {
+    const platforms = this.platforms.getChildren();
+    let bottomPlatform = platforms[0];
+
+    for (let i = 1; i < platforms.length; ++i) {
+      const platform = platforms[i];
+
+      //discard any platforms that are above current
+      if (platform.y < bottomPlatform.y) {
+        continue;
+      }
+      bottomPlatform = platform;
+    }
+    return bottomPlatform;
   }
 }
