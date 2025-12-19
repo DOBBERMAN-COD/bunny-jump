@@ -24,6 +24,10 @@ export default class Game extends Phaser.Scene {
   /**@type {Phaser.GameObjects.Text} */
   carrotsCollectedText;
 
+  init() {
+    this.carrotsCollected = 0;
+  }
+
   preload() {
     // called to allow us to specify images,audio or other assets to laod before starting the Scene
 
