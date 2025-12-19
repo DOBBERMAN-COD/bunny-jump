@@ -20,6 +20,8 @@ export default class Game extends Phaser.Scene {
   /** @type {Set<Phaser.GameObjects.Sprite} */
   activeCarrots = new Set();
 
+  carrotCollected = 0;
+
   preload() {
     // called to allow us to specify images,audio or other assets to laod before starting the Scene
 
@@ -98,6 +100,13 @@ export default class Game extends Phaser.Scene {
       undefined,
       this
     );
+
+    //Displays the score
+    const style = { color: "#000", fontSize: 24 };
+    this.add
+      .text(240, 10, "Carrots:0", style)
+      .setScrollFactor(0)
+      .setOrigin(0.5, 0);
   }
 
   update(t, dt) {
@@ -272,6 +281,9 @@ export default class Game extends Phaser.Scene {
 
     //Disable from physics world
     this.physics.world.disableBody(carrot.body);
+
+    //increment by 1
+    this.carrotsCollected++;
 
     //Destroy the carrot completely
     carrot.destroy();
