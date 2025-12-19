@@ -4,6 +4,7 @@ import Carrot from "../game/Carrot.js";
 export default class Game extends Phaser.Scene {
   constructor() {
     super("game"); //unique key defined by a Scene
+    this.carrotsCollected = 0;
   }
   /**@type {Phaser.Physics.Arcade.Sprite} */
   player;
@@ -22,8 +23,6 @@ export default class Game extends Phaser.Scene {
 
   /**@type {Phaser.GameObjects.Text} */
   carrotsCollectedText;
-
-  carrotsCollected = 0;
 
   preload() {
     // called to allow us to specify images,audio or other assets to laod before starting the Scene
@@ -291,15 +290,13 @@ export default class Game extends Phaser.Scene {
     //Disable from physics world
     this.physics.world.disableBody(carrot.body);
 
-    //increment by 1
+    //Update global count
     this.carrotsCollected++;
 
-    // create new text value and set it
-    const value = `Carrots: ${this.carrotsCollected}`;
-    console.log(this.carrotsCollected);
-    this.carrotsCollectedText.text = value;
+    // Update the text
+    this.carrotsCollectedText.setText(`Carrots:${this.carrotsCollected}`);
 
-    //Destroy the carrot completely
+    //Remove the collected carrot
     carrot.destroy();
   }
 

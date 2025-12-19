@@ -12,6 +12,9 @@ export default class Carrot extends Phaser.GameObjects.Sprite {
     super(scene, x, y, texture);
     this.setScale(0.5);
 
+    // Add initial count property
+    this.count = 0; // Initialize with 0
+
     //Add physics body to the carrot
     scene.physics.add.existing(this);
     this.body.setAllowGravity(true);
