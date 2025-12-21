@@ -24,6 +24,8 @@ export default class Game extends Phaser.Scene {
   /**@type {Phaser.GameObjects.Text} */
   carrotsCollectedText;
 
+  isJumping = false;
+
   init() {
     this.carrotsCollected = 0;
   }
@@ -44,6 +46,9 @@ export default class Game extends Phaser.Scene {
 
     //load the bunny jump image
     this.load.image("bunny-jump", "assets/bunny1_jump.png");
+
+    //load images
+    this.load.audio("jump", "assets/sfx/phaseJump1.ogg");
 
     // enable to move right and left
     this.cursors = this.input.keyboard.createCursorKeys();
@@ -122,12 +127,18 @@ export default class Game extends Phaser.Scene {
     // find out from Arcade Physics if the player's physics is touching something below it
     const touchingDown = this.player.body.touching.down;
 
-    if (touchingDown) {
+    if (touchingDown && !this.isJumping) {
       //this makes the bunny jump straight up
       this.player.setVelocityY(-300);
 
       //Switch to jump texture
       this.player.setTexture("bunny-jump");
+
+      //play jump sound
+      this.isJumping = true;
+      this.sound.play("jump");
+    } else if (!touchingDown) {
+      this.isJumping = false;
     }
 
     const vy = this.player.body.velocity.y;
