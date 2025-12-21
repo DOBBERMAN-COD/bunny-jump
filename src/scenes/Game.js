@@ -28,6 +28,7 @@ export default class Game extends Phaser.Scene {
 
   init() {
     this.carrotsCollected = 0;
+    this.registry.set("currentScore", 0);
   }
 
   preload() {
@@ -322,6 +323,9 @@ export default class Game extends Phaser.Scene {
 
     // Update the text
     this.carrotsCollectedText.setText(`Carrots:${this.carrotsCollected}`);
+
+    //update registry with current score
+    this.registry.set("currentScore", this.carrotsCollected);
 
     //Remove the collected carrot
     carrot.destroy();
