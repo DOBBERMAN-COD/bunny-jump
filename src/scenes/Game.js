@@ -26,9 +26,10 @@ export default class Game extends Phaser.Scene {
 
   isJumping = false;
 
-  init() {
+  init(data) {
     this.carrotsCollected = 0;
-    this.registry.set("currentScore", 0);
+    this.registry.set("currency", 0);
+    this.powerUp = data?.powerUp || null;
   }
 
   preload() {
@@ -122,6 +123,16 @@ export default class Game extends Phaser.Scene {
       .text(240, 10, "Carrots:0", style)
       .setScrollFactor(0)
       .setOrigin(0.5, 0);
+
+    //Power-Up Effects
+    if (this.powerUp) {
+      this.activatePowerUp(this.powerUp);
+    }
+
+    // Add score multiplier display
+    this.multiplierText = this.add.text(10, 10, "x1", {
+      fontSize: 24,
+    });
   }
 
   update(t, dt) {
@@ -325,10 +336,22 @@ export default class Game extends Phaser.Scene {
     this.carrotsCollectedText.setText(`Carrots:${this.carrotsCollected}`);
 
     //update registry with current score
-    this.registry.set("currentScore", this.carrotsCollected);
+    const currentCurrency = this.registry.get("currency");
+    this.registry.set("currency", currentCurrency + 1);
 
     //Remove the collected carrot
     carrot.destroy();
+
+    const score = this.registry.get("currentScore");
+    const multiplier = this.registry.get("multiplier");
+    this.registry.set("currentScore", score + 1 * multiplier);
+
+    if (carrot && carrot.body) {
+      carrot.disableBody(true, true);
+    }
+
+    //update UI
+    this.updateMultiplier();
   }
 
   findBottomMostPlatform() {
@@ -345,5 +368,69 @@ export default class Game extends Phaser.Scene {
       bottomPlatform = platform;
     }
     return bottomPlatform;
+  }
+
+  //Power-Up effects
+  activatePowerUp(powerUp) {
+    this.registry.set("activePowerUp", powerUp.key);
+    switch (powerUp.key) {
+      case "superJump":
+        this.player.setVelocity(-400); // higher jump
+        break;
+      case "speedBoost":
+        this.player.setVelocityX(200); // Faster movement
+        break;
+      case "doublePoints":
+        this.multiplier = 2;
+        break;
+    }
+
+    //Create visual indicator
+    this.createPowerUpIndicator();
+    this.powerUpIndicator.setText(powerUp.name);
+
+    // Set timer to deactivate power-up
+    this.time.delayedCall(powerUp.duration, () => {
+      this.deactivatePowerUp(powerUp.key);
+    });
+  }
+
+  //add power-up deactivation
+  deactivatePowerUp(powerUpKey) {
+    switch (powerUpKey) {
+      case "superJump":
+        this.player.setVelocity(-300);
+        break;
+      case "speedBoost":
+        this.player.setVelocityX(0);
+        break;
+      case "doublePoints":
+        this.registry.set("multiplier", 1);
+        break;
+    }
+    this.registry.set("activePowerUp", null);
+    this.powerUpIndicator.setVisible(false);
+  }
+  updateMultiplier() {
+    const multiplier = this.registry.get("multiplier") || 1;
+    this.multiplierText.setText(`x${multiplier}`);
+    this.multiplierText.setColor(multiplier > 1 ? "#ffd700" : "#ffffff");
+  }
+
+  //Add power-up visual indicator
+  createPowerUpIndicator() {
+    this.powerUpIndicator = this.add
+      .text(this.scale.width - 100, 10, "", { fontSize: 24 })
+      .setScrollFactor(0);
+  }
+
+  updatePowerUpIndicator() {
+    const activePowerUp = this.registry.get("activePowerUp");
+    if (activePowerUp) {
+      this.powerUpIndicator.setText(activePowerUp);
+      this.powerUpIndicator.setVisible(true);
+    } else {
+      this.powerUpIndicator.setVisible(false);
+    }
   }
 }
